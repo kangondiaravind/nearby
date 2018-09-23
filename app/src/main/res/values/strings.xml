@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Nearby</string>
+
+    <string-array name="supported_places">
+        <item>pharmacy</item>
+        <item>supermarket</item>
+        <item>veterinary_care</item>
+        <item>shopping_mall</item>
+        <item>restaurant</item>
+        <item>doctor</item>
+        <item>parking</item>
+        <item>movie_theater</item>
+    </string-array>
+
 </resources>
