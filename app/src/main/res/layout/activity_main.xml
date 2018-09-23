@@ -11,11 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <EditText
+        android:id="@+id/tv_keyword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sp_search"
+        android:hint="Keyword"/>
+
     <Button
         android:id="@+id/btn_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/sp_search"
+        android:layout_below="@+id/tv_keyword"
         android:layout_centerHorizontal="true"
         android:text="Search" />
 
@@ -23,6 +30,7 @@
         android:id="@+id/lv_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_search" />
+        android:layout_below="@+id/btn_search"
+        tools:listitem="@layout/custom_list_view"/>
 
 </RelativeLayout>
