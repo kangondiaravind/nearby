@@ -24,5 +24,4 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btn_search" />
 
-
 </RelativeLayout>
