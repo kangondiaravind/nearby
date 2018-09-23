@@ -1,4 +1,4 @@
-package nearby.aravind.nearby.Model;
+package nearby.aravind.nearby.model;
 
 import com.google.gson.annotations.SerializedName;
 

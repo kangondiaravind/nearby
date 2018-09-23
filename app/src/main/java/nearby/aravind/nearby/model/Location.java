@@ -1,4 +1,4 @@
-package nearby.aravind.nearby.Model;
+package nearby.aravind.nearby.model;
 
 public class Location {
 
