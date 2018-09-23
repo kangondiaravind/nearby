@@ -6,8 +6,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -22,17 +24,26 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     private ListView resultList;
+    String searchType;
+    Double searchRadius;
+    String searchLocation;
+    String searchKeyword;
+    String apiKey;
+    Spinner selectPlace;
+    EditText keyword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button search = (Button) findViewById(R.id.btn_search);
+        keyword = (EditText) findViewById(R.id.tv_keyword);
         resultList = (ListView) findViewById(R.id.lv_result);
-        Spinner selectplace = (Spinner) findViewById(R.id.sp_search);
+        selectPlace = (Spinner) findViewById(R.id.sp_search);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.supported_places, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        selectplace.setAdapter(adapter);
+        selectPlace.setAdapter(adapter);
+
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,13 +53,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchResult() {
+
+        searchKeyword = keyword.getText().toString().trim();
+        searchLocation = "-33.8670522,151.1957362";
+        searchRadius = 500.0;
+        searchType = selectPlace.getSelectedItem().toString();
+        apiKey = getString(R.string.api_key);
+
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://maps.googleapis.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         PlacesAPI service = retrofit.create(PlacesAPI.class);
-        Call<Places> call = service.getPlaces();
+        Call<Places> call = service.getPlaces(searchLocation, searchRadius, searchType, searchKeyword, apiKey);
         call.enqueue(new Callback<Places>() {
             @Override
             public void onResponse(Call<Places> call, Response<Places> response) {

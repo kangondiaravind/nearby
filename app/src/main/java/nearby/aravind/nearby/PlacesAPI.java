@@ -4,11 +4,17 @@ import nearby.aravind.nearby.model.Places;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface PlacesAPI {
 
-    String endurl = "maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=500&types=food&name=harbour&key=AIzaSyDvT2mQtjo-XuAiBT5EuIyXxLtcQYmB59M";
+    String endurl = "maps/api/place/nearbysearch/json";
 
     @GET(endurl)
-    Call<Places> getPlaces();
+    Call<Places> getPlaces(
+            @Query("location") String location,
+            @Query("radius") Double radius,
+            @Query("types") String types,
+            @Query("name") String name,
+            @Query("key") String key);
 }
