@@ -11,26 +11,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/tv_keyword"
+    <LinearLayout
+        android:id="@+id/llayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/sp_search"
-        android:hint="Keyword"/>
+        android:orientation="horizontal"
+        android:weightSum="1">
 
-    <Button
-        android:id="@+id/btn_search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_keyword"
-        android:layout_centerHorizontal="true"
-        android:text="Search" />
+        <EditText
+            android:id="@+id/tv_keyword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:hint="Keyword(Optional)" />
+
+        <Button
+            android:id="@+id/btn_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Search" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/lv_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_search"
-        tools:listitem="@layout/custom_list_view"/>
-
+        android:layout_below="@+id/llayout"
+        tools:listitem="@layout/custom_list_view" />
 </RelativeLayout>

@@ -9,7 +9,7 @@
         android:id="@+id/img"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@mipmap/ic_launcher_round" />
+        android:src="@drawable/nearby_logo" />
 
     <TextView
         android:id="@+id/tv_place"
