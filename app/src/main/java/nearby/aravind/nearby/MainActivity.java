@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     Location location;
     Geocoder geocoder;
     List<Address> addresses;
+    TextView displayLocationAddress;
+    TextView NoResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Button search = findViewById(R.id.btn_search);
         keyword = findViewById(R.id.tv_keyword);
+        NoResults = findViewById(R.id.tv_no_results);
+        displayLocationAddress = findViewById(R.id.tv_address);
         resultList = findViewById(R.id.lv_result);
         selectPlace = findViewById(R.id.sp_search);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.supported_places, android.R.layout.simple_spinner_item);
@@ -113,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             if (isLocationPermissionAllowed()) {
                 searchKeyword = keyword.getText().toString().trim();
                 String searchLocation = String.valueOf(location.getLatitude() + "," + String.valueOf(location.getLongitude()));
-                searchRadius = 500.0;
+                searchRadius = 1000.0;
                 searchType = selectPlace.getSelectedItem().toString();
                 apiKey = getString(R.string.api_key);
 
@@ -128,8 +133,16 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<Places> call, Response<Places> response) {
                         Places places = response.body();
-                        resultList.setAdapter(new PlacesAdapter(MainActivity.this, places));
-                        Log.d("places", new Gson().toJson(places));
+                        if (places.getList().size() == 0) {
+                            Log.e("Empty", "Emp");
+                            NoResults.setVisibility(View.VISIBLE);
+                            resultList.setVisibility(View.GONE);
+                        } else {
+                            NoResults.setVisibility(View.GONE);
+                            resultList.setVisibility(View.VISIBLE);
+                            resultList.setAdapter(new PlacesAdapter(MainActivity.this, places));
+                            Log.d("places", new Gson().toJson(places));
+                        }
                     }
 
                     @Override
@@ -157,5 +170,6 @@ public class MainActivity extends AppCompatActivity {
         String postalCode = addresses.get(0).getPostalCode();
         String knownName = addresses.get(0).getFeatureName();
         Log.e("Address is", "getAddressFromLatLng: " + address + city + state + country + postalCode + knownName);
+        displayLocationAddress.setText(" Near by \n " + address);
     }
 }
