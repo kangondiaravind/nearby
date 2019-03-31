@@ -1,9 +1,8 @@
-package nearby.aravind.nearby;
+package nearby.aravind.nearby.api;
 
 import nearby.aravind.nearby.model.Places;
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface PlacesAPI {

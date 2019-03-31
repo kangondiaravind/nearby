@@ -1,4 +1,4 @@
-package nearby.aravind.nearby;
+package nearby.aravind.nearby.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -29,7 +28,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import nearby.aravind.nearby.R;
 import nearby.aravind.nearby.adapter.PlacesAdapter;
+import nearby.aravind.nearby.api.PlacesAPI;
 import nearby.aravind.nearby.model.Places;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,21 +38,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+import static nearby.aravind.nearby.utils.Constants.APIKEY;
+
+public class MainActivity extends BaseActivity {
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private ListView resultList;
-    String searchType;
-    Double searchRadius;
-    String searchKeyword;
-    String apiKey;
-    Spinner selectPlace;
-    EditText keyword;
-    Location location;
-    Geocoder geocoder;
-    List<Address> addresses;
-    TextView displayLocationAddress;
-    TextView NoResults;
-    static String searchLocation;
+    private static String searchLocation;
+    private Spinner selectPlace;
+    private EditText keyword;
+    private TextView displayLocationAddress;
+    private TextView NoResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,22 +115,21 @@ public class MainActivity extends AppCompatActivity {
     private void fetchResult() {
         try {
             if (isLocationPermissionAllowed()) {
-                searchKeyword = keyword.getText().toString().trim();
-                //    String searchLocation = String.valueOf(location.getLatitude() + "," + String.valueOf(location.getLongitude()));
-                searchRadius = 1000.0;
-                searchType = selectPlace.getSelectedItem().toString();
-                apiKey = getString(R.string.api_key);
-
+                showProcessAlertDialog(MainActivity.this);
+                String searchKeyword = keyword.getText().toString().trim();
+                Double searchRadius = 1000.0;
+                String searchType = selectPlace.getSelectedItem().toString();
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl("https://maps.googleapis.com/")
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
 
                 PlacesAPI service = retrofit.create(PlacesAPI.class);
-                Call<Places> call = service.getPlaces(searchLocation, searchRadius, searchType, searchKeyword, apiKey);
+                Call<Places> call = service.getPlaces(searchLocation, searchRadius, searchType, searchKeyword, APIKEY);
                 call.enqueue(new Callback<Places>() {
                     @Override
                     public void onResponse(Call<Places> call, Response<Places> response) {
+                        dismissAlertDialog();
                         Places places = response.body();
                         if (places.getList().size() == 0) {
                             Log.e("Empty", "Emp");
@@ -150,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<Places> call, Throwable t) {
+                        dismissAlertDialog();
                         Toast.makeText(MainActivity.this, "Unable to process your request", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -162,8 +158,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getAddressFromLatLng(Location location) throws IOException {
-        geocoder = new Geocoder(this, Locale.getDefault());
-        addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1); // Here 1 represen// t max location result to returned, by documents it recommended 1 to 5
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
         searchLocation = String.valueOf(location.getLatitude() + "," + String.valueOf(location.getLongitude()));
         Log.e("latt", "" + location.getLatitude());
         Log.e("long", "" + location.getLongitude());

@@ -1,11 +1,13 @@
-package nearby.aravind.nearby;
+package nearby.aravind.nearby.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
-import static nearby.aravind.nearby.Constants.SPLASHDISPLAYLENGTH;
+import nearby.aravind.nearby.R;
+
+import static nearby.aravind.nearby.utils.Constants.SPLASHDISPLAYLENGTH;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
