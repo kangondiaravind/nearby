@@ -4,14 +4,15 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -36,8 +37,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.location.LocationManager.GPS_PROVIDER;
-
 public class MainActivity extends AppCompatActivity {
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private ListView resultList;
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     List<Address> addresses;
     TextView displayLocationAddress;
     TextView NoResults;
+    static String searchLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +79,12 @@ public class MainActivity extends AppCompatActivity {
         int result = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (result == PackageManager.PERMISSION_GRANTED) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            location = locationManager.getLastKnownLocation(GPS_PROVIDER);
-            getAddressFromLatLng(location);
+            Criteria criteria = new Criteria();
+            String provider = locationManager.getBestProvider(criteria, true);
+            Location location = locationManager.getLastKnownLocation(provider);
+            if (location != null) {
+                getAddressFromLatLng(location);
+            }
             return true;
         }
         Toast.makeText(this, "Permission not granted", Toast.LENGTH_SHORT).show();
@@ -105,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
             //If permission is granted
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted ", Toast.LENGTH_LONG).show();
                 fetchResult();
             } else {
                 Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
@@ -117,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             if (isLocationPermissionAllowed()) {
                 searchKeyword = keyword.getText().toString().trim();
-                String searchLocation = String.valueOf(location.getLatitude() + "," + String.valueOf(location.getLongitude()));
+                //    String searchLocation = String.valueOf(location.getLatitude() + "," + String.valueOf(location.getLongitude()));
                 searchRadius = 1000.0;
                 searchType = selectPlace.getSelectedItem().toString();
                 apiKey = getString(R.string.api_key);
@@ -160,7 +163,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void getAddressFromLatLng(Location location) throws IOException {
         geocoder = new Geocoder(this, Locale.getDefault());
-        addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1); // Here 1 represen// t max location result to returned, by documents it recommended 1 to 5
+        searchLocation = String.valueOf(location.getLatitude() + "," + String.valueOf(location.getLongitude()));
         Log.e("latt", "" + location.getLatitude());
         Log.e("long", "" + location.getLongitude());
         String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
